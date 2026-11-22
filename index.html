@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoluPred AI - ML Solubility Prediction Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 w-8" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E" alt="SoluPred AI">
+                    </div>
+                    <div class="ml-4">
+                        <h1 class="text-xl font-bold text-gray-900">SoluPred AI</h1>
+                        <p class="text-sm text-gray-500">ML Solubility Prediction</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="realTimePredictBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-bolt mr-2"></i>Real-Time Predict
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex gap-6">
+            <!-- Sidebar Navigation -->
+            <div class="w-64 flex-shrink-0">
+                <nav class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="space-y-4">
+                        <button class="nav-btn active w-full text-left px-4 py-3 rounded-lg bg-indigo-50 text-indigo-600 font-medium" data-tab="dashboard">
+                            <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                        </button>
+                        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="predict">
+                            <i class="fas fa-magic mr-3"></i>Real-Time Predict
+                        </button>
+                        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="upload">
+                            <i class="fas fa-upload mr-3"></i>Upload Data
+                        </button>
+                        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="analysis">
+                            <i class="fas fa-chart-line mr-3"></i>ML Analysis
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Quick Stats</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-xs text-gray-500">Samples</span>
+                                <span class="text-xs font-medium" id="samplesCount">1144</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-xs text-gray-500">Models</span>
+                                <span class="text-xs font-medium" id="modelsCount">5</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-xs text-gray-500">Predictions</span>
+                                <span class="text-xs font-medium" id="predictionsCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="flex-1">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                        <!-- Stats Cards -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-flask text-2xl text-blue-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Total Molecules</p>
+                                    <p class="text-2xl font-bold text-gray-900" id="totalMolecules">20</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-brain text-2xl text-green-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">ML Models</p>
+                                    <p class="text-2xl font-bold text-gray-900">5</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-calculator text-2xl text-purple-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Average LogS</p>
+                                    <p class="text-2xl font-bold text-gray-900" id="avgLogS">-1.94</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-target text-2xl text-red-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-500">Accuracy</p>
+                                    <p class="text-2xl font-bold text-gray-900">78-89%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Model Performance Comparison</h3>
+                            <div style="height: 400px;">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Solubility Distribution</h3>
+                            <div style="height: 400px;">
+                                <canvas id="solubilityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Platform Features -->
+                    <div class="mt-6 bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Platform Features</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <i class="fas fa-rocket text-3xl text-blue-500 mb-3"></i>
+                                <h4 class="font-semibold text-gray-900">Fast Processing</h4>
+                                <p class="text-sm text-gray-600 mt-2">Lightning-fast predictions with optimized algorithms</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fas fa-chart-bar text-3xl text-green-500 mb-3"></i>
+                                <h4 class="font-semibold text-gray-900">Advanced Analytics</h4>
+                                <p class="text-sm text-gray-600 mt-2">Comprehensive analysis and visualization tools</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fas fa-bullseye text-3xl text-purple-500 mb-3"></i>
+                                <h4 class="font-semibold text-gray-900">High Accuracy</h4>
+                                <p class="text-sm text-gray-600 mt-2">State-of-the-art ML models for precise predictions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-Time Predict Tab -->
+                <div id="predict-tab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Input Panel -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                                <i class="fas fa-magic mr-2 text-indigo-600"></i>Real-Time Prediction
+                            </h3>
+                            
+                            <!-- Model Selection -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select ML Model</label>
+                                <select id="modelSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="random_forest">Random Forest</option>
+                                    <option value="linear_regression">Linear Regression</option>
+                                    <option value="svm">Support Vector Machine</option>
+                                    <option value="decision_tree">Decision Tree</option>
+                                    <option value="knn">K-Nearest Neighbors</option>
+                                </select>
+                            </div>
+
+                            <!-- Input Method Selection -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Input Method</label>
+                                <div class="flex space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="inputMethod" value="manual" checked class="mr-2">
+                                        <span class="text-sm">Manual Entry</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="inputMethod" value="smiles" class="mr-2">
+                                        <span class="text-sm">SMILES String</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Manual Input Form -->
+                            <div id="manualInput">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">MolLogP</label>
+                                        <input type="number" id="molLogP" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 2.34">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">MolWt</label>
+                                        <input type="number" id="molWt" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 180.16">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">NumRotatableBonds</label>
+                                        <input type="number" id="numRotatableBonds" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 3">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">AromaticProportion</label>
+                                        <input type="number" id="aromaticProportion" step="0.01" min="0" max="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 0.5">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SMILES Input Form -->
+                            <div id="smilesInput" class="hidden">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">SMILES String</label>
+                                    <textarea id="smilesString" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter SMILES string, e.g., CC(=O)OC1=CC=CC=C1C(=O)O"></textarea>
+                                    <p class="text-xs text-gray-500 mt-1">Enter a valid SMILES notation for automatic feature extraction</p>
+                                </div>
+                            </div>
+
+                            <!-- Predict Button -->
+                            <div class="mt-6">
+                                <button id="predictBtn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                                    <i class="fas fa-magic mr-2"></i>Predict Solubility
+                                </button>
+                            </div>
+
+                            <!-- Batch Prediction -->
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <h4 class="font-medium text-gray-900 mb-3">Batch Prediction</h4>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center" id="batchUpload">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-600">Drop CSV file or click to browse</p>
+                                    <input type="file" id="batchFile" accept=".csv" class="hidden">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Panel -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                                <i class="fas fa-chart-line mr-2 text-green-600"></i>Prediction Results
+                            </h3>
+                            
+                            <!-- Live Results -->
+                            <div id="predictionResults" class="hidden">
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-4">
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-indigo-600 mb-2" id="predictedLogS">-2.45</div>
+                                        <div class="text-sm text-gray-600">Predicted LogS Value</div>
+                                        <div class="mt-2">
+                                            <span id="solubilityCategory" class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">Medium Solubility</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                        <div class="text-xl font-bold text-gray-900" id="modelAccuracy">85.7%</div>
+                                        <div class="text-xs text-gray-600">Model Accuracy</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                        <div class="text-xl font-bold text-gray-900" id="confidence">92%</div>
+                                        <div class="text-xs text-gray-600">Confidence</div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h4 class="font-medium text-gray-900 mb-2">Feature Importance</h4>
+                                    <div class="space-y-2" id="featureImportance">
+                                        <!-- Feature importance bars will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Placeholder when no results -->
+                            <div id="noResults" class="text-center py-8">
+                                <i class="fas fa-chart-line text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500">Enter molecular data and click "Predict Solubility" to see results</p>
+                            </div>
+
+                            <!-- Prediction History -->
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <h4 class="font-medium text-gray-900 mb-3">Recent Predictions</h4>
+                                <div id="predictionHistory" class="space-y-2 max-h-60 overflow-y-auto">
+                                    <!-- History items will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Visualization -->
+                    <div class="mt-6 bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Live Prediction Visualization</h3>
+                        <div style="height: 400px;">
+                            <canvas id="liveChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Data Tab -->
+                <div id="upload-tab" class="tab-content hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Upload Training Data</h3>
+                        
+                        <!-- File Upload Area -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center mb-6" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                            <h4 class="text-xl font-medium text-gray-900 mb-2">Drag and drop files here</h4>
+                            <p class="text-gray-600 mb-4">or click to browse files</p>
+                            <input type="file" id="dataFile" accept=".csv" class="hidden">
+                            <button class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                                Browse Files
+                            </button>
+                            <p class="text-sm text-gray-500 mt-3">Supported format: CSV with SMILES and LogS columns required</p>
+                        </div>
+
+                        <!-- Sample Data Format -->
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">Sample Data Format</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MolLogP</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MolWt</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NumRotatableBonds</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AromaticProportion</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">logS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2.3456</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">180.1574</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">0.5</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-2.12</td>
+                                        </tr>
+                                        <tr class="bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1.8745</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">194.1843</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">0.667</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-1.89</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3.1234</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">206.2416</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">0.4</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-3.45</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ML Analysis Tab -->
+                <div id="analysis-tab" class="tab-content hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">ML Model Analysis</h3>
+                        
+                        <!-- Model Filter -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Model</label>
+                            <select id="analysisModelSelect" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="random_forest">Random Forest</option>
+                                <option value="linear_regression">Linear Regression</option>
+                                <option value="svm">Support Vector Machine</option>
+                                <option value="decision_tree">Decision Tree</option>
+                                <option value="knn">K-Nearest Neighbors</option>
+                            </select>
+                        </div>
+
+                        <!-- Analysis Overview -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <div class="text-2xl font-bold text-blue-600">20</div>
+                                <div class="text-sm text-gray-600">Molecule Samples</div>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="text-2xl font-bold text-green-600">4</div>
+                                <div class="text-sm text-gray-600">Features</div>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <div class="text-2xl font-bold text-purple-600">5</div>
+                                <div class="text-sm text-gray-600">ML Models</div>
+                            </div>
+                        </div>
+
+                        <!-- Model Results -->
+                        <div id="modelResults" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="p-6 border border-gray-200 rounded-lg">
+                                <h4 class="font-semibold text-gray-900 mb-4">Random Forest Model</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Training MSE:</span>
+                                        <span class="text-sm font-medium">0.084525</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Testing MSE:</span>
+                                        <span class="text-sm font-medium">0.088692</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Training R²:</span>
+                                        <span class="text-sm font-medium">0.980244</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Testing R²:</span>
+                                        <span class="text-sm font-medium">0.886483</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 border border-gray-200 rounded-lg">
+                                <h4 class="font-semibold text-gray-900 mb-4">Actual vs Predicted</h4>
+                                <div style="height: 200px;">
+                                    <canvas id="scatterChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model Comparison Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">Model Accuracy Comparison</h4>
+                            <div style="height: 300px;">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h4 class="font-semibional text-gray-900 mb-4">Prediction Visualization</h4>
+                            <div style="height: 300px;">
+                                <canvas id="lineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
